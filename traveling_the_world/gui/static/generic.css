@@ -62,6 +62,15 @@ body {
     text-decoration: none;
 }
 
+.list-item a {
+  float: left;
+  color: black;
+  text-align: left;
+  padding: 14px 16px;
+  text-decoration: thick, italic;
+  font-size: 17px;
+}
+
 .list-item:hover {
     background-color: rgb(83, 212, 169);
 }

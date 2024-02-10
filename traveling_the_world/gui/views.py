@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .models import DreamDestinationsList
+from django.http import HttpResponseNotFound
 
 class MainPagesViews:
     @login_required(login_url='/login/')
@@ -12,9 +13,15 @@ class MainPagesViews:
     @login_required(login_url='/login/')
     def dream_destinations_view(request):
         """Dream destinations page."""
+        try:
+            destination_list = DreamDestinationsList.objects.filter(owner=request.user)
+        except (KeyError, DreamDestinationsList.DoesNotExist):
+            return HttpResponseNotFound('Invalid link. No dream destinations.')
         context = {
-            'dream_destination_lists': DreamDestinationsList.objects.filter(owner=request.user)
+            'name': destination_list.values().get()['dream_destinations_list'],
+            'items': destination_list.get().items.all()
         }
+        
         return render(request, 'dream_list.html', context)
 
     @login_required(login_url='/login/')

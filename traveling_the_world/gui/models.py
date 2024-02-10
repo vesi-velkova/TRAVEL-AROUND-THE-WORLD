@@ -15,7 +15,8 @@ class Destination(models.Model):
     # aturipukakapiki-maungahoronukupokaiwhenuakitnatahu (85 chars length)
     country = models.CharField(max_length=50)
     # Country with longest name is United Kingdom of Great Britain and Northern Ireland (46 letters).
-    list_name = models.ForeignKey(DreamDestinationsList, on_delete=models.CASCADE)
+    list_name = models.ForeignKey(DreamDestinationsList, on_delete=models.CASCADE,
+                                  related_name='items')
     
     def __str__(self):
         return f"{self.destination_name}, {self.country}"
