@@ -8,7 +8,10 @@ class MainPagesViews:
     @login_required(login_url='/login/')
     def home_page(request):
         """Welcome page."""
-        return render(request, 'home_page.html')
+        context = {
+            'username': request.user.first_name or request.user.username
+        }
+        return render(request, 'home_page.html', context)
 
     @login_required(login_url='/login/')
     def dream_destinations_view(request):
