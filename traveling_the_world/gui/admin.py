@@ -3,10 +3,10 @@ from .models import DreamDestinations, DreamDestinationsList
 
 class DreamDestinationsAdmin(admin.ModelAdmin):
     model = DreamDestinations
-    ordering = ('country', 'destination_name')
-    search_fields = ('destination_name',)
-    list_display = ('destination_name', 'country')
-    fields = ('destination_name', 'country')
+    ordering = ('list_name', 'country', 'destination_name')
+    search_fields = ('destination_name', 'list_name')
+    list_display = ('list_name', 'destination_name', 'country')
+    fields = ('list_name', 'destination_name', 'country')
 
 
 class DreamDestinationsListAdmin(admin.ModelAdmin):
