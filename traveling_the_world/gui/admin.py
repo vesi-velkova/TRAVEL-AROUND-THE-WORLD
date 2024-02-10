@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import DreamDestinations, DreamDestinationsList
+from .models import Destination, DreamDestinationsList
 
-class DreamDestinationsAdmin(admin.ModelAdmin):
-    model = DreamDestinations
+class DestinationAdmin(admin.ModelAdmin):
+    model = Destination
     ordering = ('list_name', 'country', 'destination_name')
     search_fields = ('destination_name', 'list_name')
     list_display = ('list_name', 'destination_name', 'country')
@@ -17,5 +17,5 @@ class DreamDestinationsListAdmin(admin.ModelAdmin):
     fields = ('dream_destinations_list', 'owner')
 
 
-admin.site.register(DreamDestinations, DreamDestinationsAdmin)
+admin.site.register(Destination, DestinationAdmin)
 admin.site.register(DreamDestinationsList, DreamDestinationsListAdmin)

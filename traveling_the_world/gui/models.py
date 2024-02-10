@@ -7,7 +7,7 @@ class DreamDestinationsList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     
     
-class DreamDestinations(models.Model):
+class Destination(models.Model):
     destination_name = models.CharField(max_length=90) 
     # The city with longest name is Taumatawhakatangihangakoauauotamate 
     # aturipukakapiki-maungahoronukupokaiwhenuakitnatahu (85 chars length)
