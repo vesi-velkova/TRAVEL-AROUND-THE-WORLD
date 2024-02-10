@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class DreamDestinationsList(models.Model):
     dream_destinations_list = models.CharField(max_length = 50, default = "DREAM DESTINATIONS")
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.owner.username} - {self.dream_destinations_list}"
