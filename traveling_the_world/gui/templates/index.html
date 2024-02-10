@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <a class="float-right" href="/logout">Logout</a>
-  <div class="header">Welcome!</div>
+    <a class="float-right" href="/logout">Logout</a>
+    <div class="header">Welcome!</div>
+    <div class="list">
+        {% for destination_list in dream_destination_lists %}
+            <div class="list-item">{{ destination_list.dream_destinations_list }}</div>
+        {% endfor %}
+    </div>
 {% endblock %}
