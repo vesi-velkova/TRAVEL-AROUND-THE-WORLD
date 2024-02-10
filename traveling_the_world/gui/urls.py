@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('', views.index), # Map empty url to the Welcome view.
+    path('', views.home_page), # Map empty url to the Welcome view.
     path('login/', auth_views.LoginView.as_view()), # Add login url.
     path('logout/', views.logout_view), # Add logout url.
     path('dream_destinations/', views.dream_destinations_view), # Add dream destinations url.

@@ -4,9 +4,9 @@ from django.contrib.auth import logout
 from .models import DreamDestinationsList
 
 @login_required(login_url='/login/')
-def index(request):
+def home_page(request):
     """Welcome page."""
-    return render(request, 'index.html')
+    return render(request, 'home_page.html')
 
 @login_required(login_url='/login/')
 def dream_destinations_view(request):
