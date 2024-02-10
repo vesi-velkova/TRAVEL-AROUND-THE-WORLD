@@ -6,10 +6,15 @@ from .models import DreamDestinationsList
 @login_required(login_url='/login/')
 def index(request):
     """Welcome page."""
+    return render(request, 'index.html')
+
+@login_required(login_url='/login/')
+def dream_destinations_view(request):
+    """Dream destinations page."""
     context = {
         'dream_destination_lists': DreamDestinationsList.objects.filter(owner=request.user)
     }
-    return render(request, 'index.html', context)
+    return render(request, 'dream_list.html', context)
 
 @login_required(login_url='/login/')
 def logout_view(request):
