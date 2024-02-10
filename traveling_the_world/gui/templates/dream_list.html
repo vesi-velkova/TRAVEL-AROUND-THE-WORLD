@@ -2,10 +2,10 @@
 
 {% block content %}
     <a class="float-right" href="/logout">Logout</a>
-    <div class="header">Welcome!</div>
+    <div class="header">DREAM DESTINATIONS</div>
     <div class="list">
         {% for destination_list in dream_destination_lists %}
-            <div class="list-item">{{ destination_list.dream_destinations_list }}</div>
+            <a href="destination_list?id={{ destination_list.pk }}" class="list-item">{{ destination_list.dream_destinations_list }}</a>
         {% endfor %}
     </div>
 {% endblock %}
