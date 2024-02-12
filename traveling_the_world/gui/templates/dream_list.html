@@ -2,6 +2,14 @@
 
 {% block content %}
     <div class="header">{{ name }}</div>
+    <style>
+        body {
+          background-image: url('{{photo}}');
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-size: 100% 100%;
+        }
+    </style>
     <div class="list">
         {% for item in items %}
             <div class="list-item">{{ item }}</div>

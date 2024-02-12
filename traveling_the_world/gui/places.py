@@ -1,5 +1,6 @@
 import os
 import pycountry
+import urllib
 import requests
 import geonamescache
 import countryinfo
@@ -31,7 +32,8 @@ class PlacesUtilities:
         type around a given place (given city and radius). From the information we will extract 
         only the valid ones (with rating), we will keep the information about the place_id, formatted_address,
         geometry/location, rating, user_ratings_total, type and name. If type is not specified, then the 
-        query will be only for a specified place (country, province or city)."""
+        query will be only for a specified place (country, province or city). In this case only the place_id
+        will be returned."""
         # Basic url for text search via Google Maps API - Places.
         URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
         # When the city is specified in the query, it overrides the location parameter.
@@ -39,6 +41,10 @@ class PlacesUtilities:
         # other factors such as nearby location.
         if type == '':
             query = place
+            parameters = {'query':query, 'key': API_KEY}
+            curr_request = requests.get(url = URL, params = parameters)
+            data = curr_request.json()
+            return data['results'][0]['place_id']
         else:
             query = type + ' in ' + place
         parameters = {'query':query, 'radius': radius, 'key':API_KEY}
@@ -78,3 +84,15 @@ class PlacesUtilities:
         list_of_cities.sort(reverse=True,key=lambda item: item.get('population'))
         return [city['name'] for city in list_of_cities[0:30]]
         
+    def get_url_place_photo(self, place_id):
+        URL_DETAILS = 'https://maps.googleapis.com/maps/api/place/details/json'
+        parameters = {'place_id':place_id, 'key': API_KEY}
+        curr_request = requests.get(url = URL_DETAILS, params = parameters)
+        detailed_data = curr_request.json()
+        photo_reference = detailed_data['result']['photos'][0]['photo_reference']
+        
+        URL_PHOTO = 'https://maps.googleapis.com/maps/api/place/photo?'
+        parameters = {'maxwidth':'4000', 'photo_reference':photo_reference, 'key': API_KEY}
+        photo_request = URL_PHOTO + urllib.parse.urlencode(parameters)
+        return photo_request
+    

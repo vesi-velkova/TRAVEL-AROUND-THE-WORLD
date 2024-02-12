@@ -98,3 +98,9 @@ a:hover {
 .list-item:hover {
     background-color: rgb(83, 212, 169);
 }
+
+.background {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
