@@ -4,7 +4,7 @@ body {
 }
 #content {
     width: 600px;
-    max-width: 100%;
+    max-width: 80%;
     margin: 20px auto;
     padding: 20px;
     background-color: #EFEFEF;
@@ -13,8 +13,35 @@ body {
     box-shadow: 0px 0px 5px 0px black;
 }
 
+a {
+    color: inherit;
+    text-decoration: none;
+    padding: 3px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+a:hover {
+  background-color: rgb(83, 212, 169);
+}
+
 .float-right {
     float: right;
+}
+
+.float-left {
+  float: left;
+}
+
+.clear {
+  clear: both;
+}
+
+.header {
+  font-size: 120%;
+  margin: 40px 10px;
+  font-style: italic;
+  text-align: center;
 }
 
 /* Add a black background color to the top navigation */
@@ -29,7 +56,6 @@ body {
     color: #f2f2f2;
     text-align: center;
     padding: 14px 16px;
-    text-decoration: none;
     font-size: 17px;
 }
   
@@ -58,8 +84,7 @@ body {
     cursor: pointer;
     padding: 5px;
     border-radius: 5px;
-    color: inherit;
-    text-decoration: none;
+    margin: 3px;
 }
 
 .list-item a {
@@ -67,10 +92,15 @@ body {
   color: black;
   text-align: left;
   padding: 14px 16px;
-  text-decoration: thick, italic;
   font-size: 17px;
 }
 
 .list-item:hover {
     background-color: rgb(83, 212, 169);
+}
+
+.background {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }

@@ -5,6 +5,7 @@
     <title>TRAVEL AROUND THE WORLD</title>
     <link rel="icon" href="{% load static %} {% static 'plane_globe_logo.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'generic.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="topnav">
@@ -14,6 +15,7 @@
         <a href="#visited_places">Visited places</a>
         <a href="/dream_destinations/">Dream destinations</a>
         <a href="#profile">Your profile</a>
+        <a class="float-right" href="/logout">Logout</a>
     </div>
     <div id="content">
         {% block content %}{% endblock %}
