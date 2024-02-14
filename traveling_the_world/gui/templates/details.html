@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="header">{{ destination_name }}</div>
+    <style>
+        body {
+          background-image: url('{{photo}}');
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-size: 100% 100%;
+        }
+    </style>
+    <div class="list">
+        <div class="list-item">Country: {{ name }}</div>
+        <div class="list-item">Region, continent: {{ subregion }}, {{ region }}</div>
+        <div class="list-item">Capital city: {{ capital }}</div>
+        <div class="list-item">Currencies: {% for item in currencies %}{{ item }} {% endfor %}</div>
+        <div class="list-item">Languages: {% for item in languages %}{{ item }} {% endfor %}</div>
+        <div class="list-item">Population: {{ population }}</div>
+        <a href={{wiki}} class="list-item">{{ wiki }}</a>
+    </div>
+{% endblock %}
