@@ -23,10 +23,10 @@ admin.site.register(DreamDestinationsList, DreamDestinationsListAdmin)
 
 class CountryAdmin(admin.ModelAdmin):
     model = Country
-    ordering = ('name', 'cities_to_visit')
-    search_fields = ('name',)
-    list_display = ('name', 'visited')
-    fields = ('name', 'cities_to_visit', 'visited')
+    ordering = ('countries_list', 'name', 'cities_to_visit')
+    search_fields = ('countries_list', 'name')
+    list_display = ('name', 'visited', 'countries_list')
+    fields = ('name', 'cities_to_visit', 'visited', 'countries_list')
 
 
 class CountriesListAdmin(admin.ModelAdmin):
