@@ -4,10 +4,11 @@ import countryinfo
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from .models import DreamDestinationsList
-from .models import Destination
+
 from django.http import HttpResponseNotFound, JsonResponse
 from . import places
+from .models import DreamDestinationsList, Destination
+from .forms import AddDestinationForm
 
 @login_required(login_url='/login/')
 def home_page(request):
@@ -77,4 +78,20 @@ def remove_item(request):
     except (KeyError, Destination.DoesNotExist):
         return HttpResponseNotFound('Invalid link.')
     item.delete()
-    return JsonResponse({'state': 'removed'})
+    return redirect('/dream_destinations/')
+
+@login_required(login_url='/login/')
+def add_item(request):
+    """Add an item."""
+    try:
+        destination_name = request.POST['destination_name']
+        country = request.POST['country']
+        list_name = DreamDestinationsList.objects.filter(owner=request.user).get()
+    except (KeyError, ValueError, DreamDestinationsList.DoesNotExist):
+        return HttpResponseNotFound('Invalid link.')
+    form = AddDestinationForm({'destination_name': destination_name,
+                                'country': country,
+                                'list_name': list_name})
+    if form.is_valid():
+        form.save()
+    return redirect('/dream_destinations/')

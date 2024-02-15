@@ -17,8 +17,7 @@ a {
     color: inherit;
     text-decoration: none;
     padding: 3px;
-    border-radius: 5px;
-    border: 1px solid black;
+    
 }
 
 a:hover {
@@ -38,8 +37,14 @@ a:hover {
 }
 
 .header {
-  font-size: 120%;
+  font-size: 150%;
   margin: 40px 10px;
+  font-style: italic;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 110%;
   font-style: italic;
   text-align: center;
 }
@@ -83,8 +88,9 @@ a:hover {
     display: block;
     cursor: pointer;
     padding: 5px;
-    border-radius: 5px;
     margin: 3px;
+    border-radius: 5px;
+    border: 1px solid black
 }
 
 .list-item a {
@@ -110,4 +116,12 @@ a:hover {
     height: 15px;
     line-height: 15px;
     text-align: center;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.add-item {
+  width: 40px;
+  line-height: 10px;
+  display: inline;
 }
