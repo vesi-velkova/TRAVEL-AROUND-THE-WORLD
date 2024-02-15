@@ -12,7 +12,8 @@
     </style>
     <div class="list">
         {% for item in items %}
-            <a href='details?id={{item.pk}}' class="list-item">{{ item }}</a>
+            <a href='details?id={{item.pk}}' class="list-item"design:inline>{{ item }}</a>
+            <a class="remove-item float-right " href="remove_item?id={{item.pk}}">x</a>
         {% endfor %}
     </div>
 {% endblock %}

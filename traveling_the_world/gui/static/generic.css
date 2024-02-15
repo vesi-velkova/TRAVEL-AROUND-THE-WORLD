@@ -99,8 +99,15 @@ a:hover {
     background-color: rgb(83, 212, 169);
 }
 
-.background {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.list-item input{
+  display: none;
+}
+
+.remove-item {
+    padding: 1px;
+    color: black;
+    width: 10px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
 }

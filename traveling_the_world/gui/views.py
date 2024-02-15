@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .models import DreamDestinationsList
 from .models import Destination
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, JsonResponse
 from . import places
 
 @login_required(login_url='/login/')
@@ -66,3 +66,15 @@ def detailed_page(request):
 
     return render(request, 'details.html', context)
     
+@login_required(login_url='/login/')
+def remove_item(request):
+    """Remove an item."""
+    try:
+        item = Destination.objects.get(pk=request.GET['id'])
+        # Ensure that a user can't touch other people's stuff
+        if item.list_name.owner != request.user:
+            return HttpResponseNotFound('Invalid link.')
+    except (KeyError, Destination.DoesNotExist):
+        return HttpResponseNotFound('Invalid link.')
+    item.delete()
+    return JsonResponse({'state': 'removed'})
