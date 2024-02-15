@@ -20,3 +20,9 @@ class Destination(models.Model):
     
     def __str__(self):
         return f"{self.destination_name}, {self.country}"
+    
+
+class Country(models.Model):
+    name = models.CharField(max_length=50)
+    cities_to_visit = models.IntegerField(default=1)
+    visited = models.BooleanField(default=False)

@@ -94,7 +94,8 @@ class PlacesUtilities:
             return (location.latitude, location.longitude)
         raise AttributeError("Unable to extract latitude and longitude of this location.")
     
-    def find_places_given_place_type_and_radius(self, place, radius=50000, type = ""):
+    @staticmethod
+    def find_places_given_place_type_and_radius(place, radius=50000, type = ""):
         """This function has to find via textsearch all of the places of a certain type around a given place
         (given city and radius). Only information about the place_id, geometry/location and name will be saved.
         If type is not specified, then the query will be only for a specified place (country, province or city).
@@ -153,4 +154,12 @@ class PlacesUtilities:
         list_of_cities.sort(reverse=True,key=lambda item: item.get('population'))
         return [city['name'] for city in list_of_cities[0:30]]
         
+    
+    @staticmethod
+    def is_country_valid(country_name):
+        try:
+            pycountry.countries.lookup(country_name)
+        except LookupError:
+            return False
+        return True
     

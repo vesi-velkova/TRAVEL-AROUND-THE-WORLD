@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Destination, DreamDestinationsList
+from .models import Country
 
 class DestinationAdmin(admin.ModelAdmin):
     model = Destination
@@ -19,3 +20,12 @@ class DreamDestinationsListAdmin(admin.ModelAdmin):
 
 admin.site.register(Destination, DestinationAdmin)
 admin.site.register(DreamDestinationsList, DreamDestinationsListAdmin)
+
+class CountryAdmin(admin.ModelAdmin):
+    model = Country
+    ordering = ('name', 'cities_to_visit')
+    search_fields = ('name',)
+    list_display = ('name', 'visited')
+    fields = ('name', 'cities_to_visit', 'visited')
+
+admin.site.register(Country, CountryAdmin)
