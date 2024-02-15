@@ -118,6 +118,8 @@ a:hover {
     text-align: center;
     border-radius: 5px;
     border: 1px solid black;
+    margin-top: -27px;
+    margin-right: 5px;
 }
 
 .add-item {
