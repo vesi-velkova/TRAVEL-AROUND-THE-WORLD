@@ -94,7 +94,8 @@ class PlacesUtilities:
             return (location.latitude, location.longitude)
         raise AttributeError("Unable to extract latitude and longitude of this location.")
     
-    def find_places_given_place_type_and_radius(self, place, radius=50000, type = ""):
+    @staticmethod
+    def find_places_given_place_type_and_radius(place, radius=50000, type = ""):
         """This function has to find via textsearch all of the places of a certain type around a given place
         (given city and radius). Only information about the place_id, geometry/location and name will be saved.
         If type is not specified, then the query will be only for a specified place (country, province or city).
@@ -133,11 +134,11 @@ class PlacesUtilities:
         In case that the specified country has less than 30 cities with population above 15000 people, all of 
         them will be appended to the list."""
         list_of_cities = []
-        try:
-            country = pycountry.countries.lookup(country_name)
-        except LookupError:
-            print(f"Can not find cities, because {country_name} is invalid country.")
-            raise
+        if self.is_country_valid(country_name):
+            country_code = countryinfo.CountryInfo(country_name).iso()['alpha2']
+        else:
+            raise LookupError
+
         country_code = countryinfo.CountryInfo(country_name).iso()['alpha2']
         for city in self.geonames.get_cities().values():
             if city['countrycode'] == country_code:
@@ -153,4 +154,13 @@ class PlacesUtilities:
         list_of_cities.sort(reverse=True,key=lambda item: item.get('population'))
         return [city['name'] for city in list_of_cities[0:30]]
         
+    
+    @staticmethod
+    def is_country_valid(country_name):
+        try:
+            pycountry.countries.lookup(country_name)
+        except LookupError:
+            print('Can not find this country. Maybe it is invalid?')
+            return False
+        return True
     

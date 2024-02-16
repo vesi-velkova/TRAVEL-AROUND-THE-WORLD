@@ -4,10 +4,13 @@ import countryinfo
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from .models import DreamDestinationsList
-from .models import Destination
+from django.contrib.auth import login
+
 from django.http import HttpResponseNotFound
 from . import places
+from .models import DreamDestinationsList, Destination
+from .forms import AddDestinationForm, RegisterUserForm
+from .admin import CountryAdmin, CountriesListAdmin
 
 @login_required(login_url='/login/')
 def home_page(request):
@@ -22,9 +25,11 @@ def dream_destinations_view(request):
     """Dream destinations page."""
     try:
         destination_list = DreamDestinationsList.objects.filter(owner=request.user)
+        length = len(destination_list.get().items.all())
     except (KeyError, DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
-    if not len(destination_list.get().items.all()):
+    if not length:
+        # Show background image of Burgas is the list of dream destinations is empty.
         place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius('Burgas, Bridge')
     else:
         index = random.randint(1, len(destination_list.get().items.all()))
@@ -36,15 +41,6 @@ def dream_destinations_view(request):
         'photo': place_obj[0].get_photo_url()
     }
     return render(request, 'dream_list.html', context)
-
-@login_required(login_url='/login/')
-def logout_view(request):
-    """
-    Logout view. Login is required. 
-    Redirects to the login page. 
-    """
-    logout(request)
-    return redirect("/login/")
 
 @login_required(login_url='/login/')
 def detailed_page(request):
@@ -66,3 +62,58 @@ def detailed_page(request):
 
     return render(request, 'details.html', context)
     
+@login_required(login_url='/login/')
+def remove_item(request):
+    """Remove an item from the list of dream destinations of the user."""
+    try:
+        item = Destination.objects.get(pk=request.GET['id'])
+        # Ensure that a user can't touch other people's stuff
+        if item.list_name.owner != request.user:
+            return HttpResponseNotFound('Invalid link.')
+    except (KeyError, Destination.DoesNotExist):
+        return HttpResponseNotFound('Invalid link.')
+    item.delete()
+    return redirect('/dream_destinations/')
+
+@login_required(login_url='/login/')
+def add_item(request):
+    """Add an item to the list with dream destinations of the user."""
+    try:
+        destination_name = request.POST['destination_name']
+        country = request.POST['country']
+        list_name = DreamDestinationsList.objects.filter(owner=request.user).get()
+    except (KeyError, ValueError, DreamDestinationsList.DoesNotExist):
+        return HttpResponseNotFound('Invalid link.')
+    if not places.PlacesUtilities.is_country_valid(country):
+        return HttpResponseNotFound('Please, enter a valid country in the world.')
+    form = AddDestinationForm({'destination_name': destination_name,
+                                'country': country,
+                                'list_name': list_name})
+    if form.is_valid():
+        form.save()
+    return redirect('/dream_destinations/')
+
+@login_required(login_url='/login/')
+def logout_view(request):
+    """
+    Logout view. Login is required. 
+    Redirects to the login page. 
+    """
+    logout(request)
+    return redirect("/login/")
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            CountriesListAdmin.populate_database(user)
+            CountryAdmin.populate_database(user)
+            return redirect('/')
+    else:
+        form = RegisterUserForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'registration/register.html', context)
