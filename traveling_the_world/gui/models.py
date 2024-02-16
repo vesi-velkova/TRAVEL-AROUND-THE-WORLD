@@ -33,7 +33,8 @@ class Country(models.Model):
     name = models.CharField(max_length=50)
     cities_to_visit = models.IntegerField(default=1)
     visited = models.BooleanField(default=False)
-    countries_list = models.ForeignKey(CountryList, on_delete=models.CASCADE)
+    countries_list = models.ForeignKey(CountryList, on_delete=models.CASCADE,
+                                       related_name='countries')
 
     def __str__(self):
         return f"{self.name}"

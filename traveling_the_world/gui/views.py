@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from django.http import HttpResponseNotFound
 from . import places
 from .models import DreamDestinationsList, Destination
+from .models import CountryList, Country
 from .forms import AddDestinationForm, RegisterUserForm
 from .admin import CountryAdmin, CountriesListAdmin
 
@@ -41,6 +42,17 @@ def dream_destinations_view(request):
         'photo': place_obj[0].get_photo_url()
     }
     return render(request, 'dream_list.html', context)
+
+@login_required(login_url='/login/')
+def find_destination_view(request):
+    try:
+        countries_list = CountryList.objects.filter(owner=request.user)
+    except (KeyError, DreamDestinationsList.DoesNotExist):
+        return HttpResponseNotFound('Invalid link. No dream destinations.')
+    context = {
+        'items': countries_list.get().countries.all(),
+    }
+    return render(request, 'destination.html', context)
 
 @login_required(login_url='/login/')
 def detailed_page(request):

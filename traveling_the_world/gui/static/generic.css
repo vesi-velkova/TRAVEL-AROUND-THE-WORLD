@@ -101,10 +101,6 @@ a:hover {
     background-color: rgb(83, 212, 169);
 }
 
-.list-item input{
-    display: none;
-}
-
 .remove-item {
     padding: 1px;
     color: black;
