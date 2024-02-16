@@ -21,7 +21,7 @@ a {
 }
 
 a:hover {
-  background-color: rgb(83, 212, 169);
+    background-color: rgb(83, 212, 169);
 }
 
 .float-right {
@@ -29,34 +29,32 @@ a:hover {
 }
 
 .float-left {
-  float: left;
+    float: left;
 }
 
 .clear {
-  clear: both;
+    clear: both;
 }
 
 .header {
-  font-size: 150%;
-  margin: 40px 10px;
-  font-style: italic;
-  text-align: center;
+    font-size: 150%;
+    margin: 40px 10px;
+    font-style: italic;
+    text-align: center;
 }
 
 .subtitle {
-  font-size: 110%;
-  font-style: italic;
-  text-align: center;
+    font-size: 110%;
+    font-style: italic;
+    text-align: center;
 }
 
-/* Add a black background color to the top navigation */
 .topnav {
     background-color: black;
     overflow: hidden;
 }
   
-  /* Style the links inside the navigation bar */
-  .topnav a {
+.topnav a {
     float: left;
     color: #f2f2f2;
     text-align: center;
@@ -64,19 +62,17 @@ a:hover {
     font-size: 17px;
 }
   
-  /* Change the color of links on hover */
-  .topnav a:hover {
+.topnav a:hover {
     background-color: rgb(198, 240, 226);
     color: black;
 }
-  
-  /* Add a color to the active/current link */
-  .topnav a.active {
+ 
+.topnav a.active {
     background-color: rgb(29, 208, 148);
     color: white;
 }
 
-  .list {
+.list {
     padding: 5px;
     margin: 20px;
     border: 1px solid black;
@@ -94,11 +90,11 @@ a:hover {
 }
 
 .list-item a {
-  float: left;
-  color: black;
-  text-align: left;
-  padding: 14px 16px;
-  font-size: 17px;
+    float: left;
+    color: black;
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 17px;
 }
 
 .list-item:hover {
@@ -106,7 +102,7 @@ a:hover {
 }
 
 .list-item input{
-  display: none;
+    display: none;
 }
 
 .remove-item {
@@ -123,7 +119,11 @@ a:hover {
 }
 
 .add-item {
-  width: 40px;
-  line-height: 10px;
-  display: inline;
+    width: 40px;
+    line-height: 10px;
+    display: inline;
+}
+
+.errorlist {
+    color: red;
 }
