@@ -4,11 +4,12 @@ import countryinfo
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.contrib.auth import login
 
 from django.http import HttpResponseNotFound, JsonResponse
 from . import places
 from .models import DreamDestinationsList, Destination
-from .forms import AddDestinationForm
+from .forms import AddDestinationForm, RegisterUserForm
 
 @login_required(login_url='/login/')
 def home_page(request):
@@ -23,9 +24,10 @@ def dream_destinations_view(request):
     """Dream destinations page."""
     try:
         destination_list = DreamDestinationsList.objects.filter(owner=request.user)
+        length = len(destination_list.get().items.all())
     except (KeyError, DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
-    if not len(destination_list.get().items.all()):
+    if not length:
         # Show background image of Burgas is the list of dream destinations is empty.
         place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius('Burgas, Bridge')
     else:
@@ -98,3 +100,17 @@ def logout_view(request):
     """
     logout(request)
     return redirect("/login/")
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+    else:
+        form = RegisterUserForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'registration/register.html', context)

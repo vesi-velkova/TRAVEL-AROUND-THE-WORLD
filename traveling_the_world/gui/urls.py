@@ -11,4 +11,5 @@ urlpatterns = [
     path('dream_destinations/details/', views.detailed_page),
     path('dream_destinations/remove_item/', views.remove_item),
     path('dream_destinations/add_item/', views.add_item),
+    path('register/', views.register)
 ]
