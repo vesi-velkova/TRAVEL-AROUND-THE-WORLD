@@ -6,10 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth import login
 
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound
 from . import places
 from .models import DreamDestinationsList, Destination
 from .forms import AddDestinationForm, RegisterUserForm
+from .admin import CountryAdmin, CountriesListAdmin
 
 @login_required(login_url='/login/')
 def home_page(request):
@@ -107,6 +108,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            CountriesListAdmin.populate_database(user)
+            CountryAdmin.populate_database(user)
             return redirect('/')
     else:
         form = RegisterUserForm()
