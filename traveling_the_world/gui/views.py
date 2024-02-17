@@ -5,13 +5,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth import login
-
-from django.http import HttpResponseNotFound
-from . import places
-from .models import DreamDestinationsList, Destination
-from .models import CountryList, Country
+from django.http import HttpResponseNotFound, JsonResponse
 from .forms import AddDestinationForm, RegisterUserForm
-from .admin import CountryAdmin, CountriesListAdmin
+
+from . import places
+from . import models
+from . import admin
 
 @login_required(login_url='/login/')
 def home_page(request):
@@ -25,9 +24,9 @@ def home_page(request):
 def dream_destinations_view(request):
     """Dream destinations page."""
     try:
-        destination_list = DreamDestinationsList.objects.filter(owner=request.user)
+        destination_list = models.DreamDestinationsList.objects.filter(owner=request.user)
         length = len(destination_list.get().items.all())
-    except (KeyError, DreamDestinationsList.DoesNotExist):
+    except (KeyError, models.DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
     if not length:
         # Show background image of Burgas is the list of dream destinations is empty.
@@ -46,8 +45,8 @@ def dream_destinations_view(request):
 @login_required(login_url='/login/')
 def find_destination_view(request):
     try:
-        countries_list = CountryList.objects.filter(owner=request.user)
-    except (KeyError, DreamDestinationsList.DoesNotExist):
+        countries_list = models.CountryList.objects.filter(owner=request.user)
+    except (KeyError, models.DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
     context = {
         'items': countries_list.get().countries.all(),
@@ -58,8 +57,8 @@ def find_destination_view(request):
 def detailed_page(request):
     """Individual page with details for every dream destination."""
     try:
-        destination = Destination.objects.get(pk=request.GET['id'])
-    except (KeyError, Destination.DoesNotExist):
+        destination = models.Destination.objects.get(pk=request.GET['id'])
+    except (KeyError, models.Destination.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No ID found.')
     place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius(destination)
     context = {
@@ -78,11 +77,11 @@ def detailed_page(request):
 def remove_item(request):
     """Remove an item from the list of dream destinations of the user."""
     try:
-        item = Destination.objects.get(pk=request.GET['id'])
+        item = models.Destination.objects.get(pk=request.GET['id'])
         # Ensure that a user can't touch other people's stuff
         if item.list_name.owner != request.user:
             return HttpResponseNotFound('Invalid link.')
-    except (KeyError, Destination.DoesNotExist):
+    except (KeyError, models.Destination.DoesNotExist):
         return HttpResponseNotFound('Invalid link.')
     item.delete()
     return redirect('/dream_destinations/')
@@ -93,8 +92,8 @@ def add_item(request):
     try:
         destination_name = request.POST['destination_name']
         country = request.POST['country']
-        list_name = DreamDestinationsList.objects.filter(owner=request.user).get()
-    except (KeyError, ValueError, DreamDestinationsList.DoesNotExist):
+        list_name = models.DreamDestinationsList.objects.filter(owner=request.user).get()
+    except (KeyError, ValueError, models.DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link.')
     if not places.PlacesUtilities.is_country_valid(country):
         return HttpResponseNotFound('Please, enter a valid country in the world.')
@@ -120,8 +119,9 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            CountriesListAdmin.populate_database(user)
-            CountryAdmin.populate_database(user)
+            admin.CountriesListAdmin.populate_database(user)
+            admin.CountryAdmin.populate_database(user)
+            admin.DreamDestinationsListAdmin.populate_database(user)
             return redirect('/')
     else:
         form = RegisterUserForm()
@@ -129,3 +129,19 @@ def register(request):
         'form': form
     }
     return render(request, 'registration/register.html', context)
+
+@login_required(login_url='/login')
+def visit_item_view(request):
+    """Toggle between visited states of a country."""
+    try:
+        item = models.Country.objects.get(pk=request.GET['id'])
+        print(item)
+        state = request.GET['state'] == '1'
+        # Ensure that a user can't touch other people's stuff
+        if item.countries_list.owner != request.user:
+            return HttpResponseNotFound('Invalid link.')
+    except (KeyError, models.Country.DoesNotExist):
+        return HttpResponseNotFound('Invalid link.')
+    item.visited = state
+    item.save()
+    return JsonResponse({'state': item.visited})

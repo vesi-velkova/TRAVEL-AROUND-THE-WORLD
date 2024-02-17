@@ -13,4 +13,5 @@ urlpatterns = [
     path('dream_destinations/add_item/', views.add_item),
     path('register/', views.register),
     path('destination/', views.find_destination_view),
+    path('visit_item/', views.visit_item_view),
 ]

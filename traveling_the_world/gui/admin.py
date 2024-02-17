@@ -20,6 +20,10 @@ class DreamDestinationsListAdmin(admin.ModelAdmin):
     list_display = ('dream_destinations_list', 'owner')
     fields = ('dream_destinations_list', 'owner')
 
+    @staticmethod
+    def populate_database(user):
+        object = DreamDestinationsList(dream_destinations_list = "DREAM DESTINATIONS", owner = user)
+        object.save()
 
 admin.site.register(Destination, DestinationAdmin)
 admin.site.register(DreamDestinationsList, DreamDestinationsListAdmin)

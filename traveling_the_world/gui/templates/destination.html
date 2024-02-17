@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script src="{% load static %}{% static 'generic.js' %}"></script>
     <div class="header"> Countries </div>
 
     <div class="clear"></div>
@@ -8,8 +9,10 @@
         {% if items %}
             {% for item in items %}
                 <div class="list-item">
-                    {{ item.name }} 
-                    <input type="checkbox" {% if item.visited %} checked="checked" {% endif %} />
+                    {{ item }} 
+                    <input type="checkbox" data-id="{{ item.pk }}"
+                        {% if item.visited %} checked="checked" {% endif %} 
+                    />
                 </div>
             {% endfor %}
         {% else %}
