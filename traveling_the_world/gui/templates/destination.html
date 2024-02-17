@@ -14,6 +14,7 @@
                         {% if item.visited %} checked="checked" {% endif %} 
                     />
                 </div>
+                <a href='destination/search_cities?id={{item.pk}}' class='search-item'>Find cities</a>
             {% endfor %}
         {% else %}
             <span class="empty-list-identifier">No countries are visible for you yet, sorry... :(</span>

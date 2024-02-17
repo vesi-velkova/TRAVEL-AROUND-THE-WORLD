@@ -132,3 +132,11 @@ a:hover {
 .list-item input{
     display: none;
 }
+
+.search-item {
+    width: 20px;
+    line-height: 10px;
+    display: inline;
+    padding: 5px;
+    margin: 3px;
+}
