@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script src="{% load static %}{% static 'remove_item.js' %}"></script>
     <div class="header">{{ name }}</div>
     <style>
         body {
@@ -23,7 +24,7 @@
         {% if items %}
             {% for item in items %}
                 <a href='details?id={{item.pk}}' class="list-item">{{ item }}</a>
-                <a class="remove-item float-right " href="remove_item?id={{item.pk}}">x</a>
+                <a href=# class="remove-item float-right" data-id="{{item.pk}}" >x</a>
             {% endfor %}
         {% else %}
             <span class="empty-list-identifier">No dream destinations yet, sorry... :(</span>

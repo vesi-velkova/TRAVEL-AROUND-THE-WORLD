@@ -78,13 +78,14 @@ def remove_item(request):
     """Remove an item from the list of dream destinations of the user."""
     try:
         item = models.Destination.objects.get(pk=request.GET['id'])
+        print(item)
         # Ensure that a user can't touch other people's stuff
         if item.list_name.owner != request.user:
             return HttpResponseNotFound('Invalid link.')
     except (KeyError, models.Destination.DoesNotExist):
         return HttpResponseNotFound('Invalid link.')
     item.delete()
-    return redirect('/dream_destinations/')
+    return JsonResponse({'state': 'removed'})
 
 @login_required(login_url='/login/')
 def add_item(request):
@@ -135,7 +136,6 @@ def visit_item_view(request):
     """Toggle between visited states of a country."""
     try:
         item = models.Country.objects.get(pk=request.GET['id'])
-        print(item)
         state = request.GET['state'] == '1'
         # Ensure that a user can't touch other people's stuff
         if item.countries_list.owner != request.user:
