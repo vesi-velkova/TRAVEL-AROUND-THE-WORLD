@@ -1,9 +1,11 @@
 from django.test import TestCase, Client
-from django.urls import reverse
+from django.urls import reverse, resolve
 from django.contrib.auth.models import User
+from django.contrib.auth import views as auth_views
 
 from . import models
 from . import views
+from . import forms
 
 class TestViews(TestCase):
     REDIRECT_STATUS_CODE = 302
@@ -327,3 +329,230 @@ class TestViews(TestCase):
 
         self.assertEqual(response.status_code, self.REDIRECT_STATUS_CODE)
         self.assertTrue(models.Destination.objects.filter(destination_name = 'Amsterdam').exists())
+
+
+class TestForms(TestCase):
+    DEST_NAME_STR = 'Amsterdam'
+    COUNTRY_STR = 'Netherlands'
+    USERNAME = 'test_user'
+    PASSWORD = 'burgas@01_usr'
+    PASS_COMMON = 'test1234'
+    PASS_DIGITS = '12345678'
+    PASS_SHORT = 'test1'
+    PASS_SIMILAR = 'test_user'
+    NAME = 'Vesi'
+    FAMILY_NAME = 'Testing'
+
+    def setUp(self):
+        self.TEST_USER = User.objects.create_user(username = 'test_user_base',
+                                                  password = self.PASSWORD, first_name = 'Testing')
+        self.destination_list = models.DreamDestinationsList.objects.create(owner = self.TEST_USER,
+                                                                    dream_destinations_list = 'Test List')
+
+    def test_destination_valid(self):
+        fill_in_data = {
+            'destination_name':self.DEST_NAME_STR,
+            'country':self.COUNTRY_STR,
+            'list_name':self.destination_list
+        }
+        form = forms.AddDestinationForm(fill_in_data)
+        self.assertTrue(form.is_valid())
+
+    def test_destination_missed_list(self):
+        fill_in_data = {
+            'destination_name':self.DEST_NAME_STR,
+            'country':self.COUNTRY_STR,
+        }
+        form = forms.AddDestinationForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_destination_missed_dest_name(self):
+        fill_in_data = {
+            'country':self.COUNTRY_STR,
+            'list_name':self.destination_list
+        }
+        form = forms.AddDestinationForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_destination_missing_country(self):
+        fill_in_data = {
+            'destination_name':self.DEST_NAME_STR,
+            'list_name':self.destination_list
+        }
+        form = forms.AddDestinationForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_destination_country_name_too_long(self):
+        fill_in_data = {
+            'destination_name':self.DEST_NAME_STR,
+            'country':'AlaBala'*8,
+            'list_name':self.destination_list
+        }
+        form = forms.AddDestinationForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_valid(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+            'password2':self.PASSWORD
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertTrue(form.is_valid())
+
+    def test_registration_username_already_exists(self):
+        fill_in_data = {
+            'username':'test_user_base',
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+            'password2':self.PASSWORD
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_password_too_common(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASS_COMMON,
+            'password2':self.PASS_COMMON
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_password_only_digits(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASS_DIGITS,
+            'password2':self.PASS_DIGITS
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_password_too_short(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASS_SHORT,
+            'password2':self.PASS_SHORT
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_pass_similar_to_username(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASS_SIMILAR,
+            'password2':self.PASS_SIMILAR
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_passwords_different(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+            'password2':'burgas@02_usr'
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_password_missing_1(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password2':self.PASSWORD,
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_password_missing_2(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+    def test_registration_first_name_missing(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+            'password2':self.PASSWORD,
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertTrue(form.is_valid())
+
+    def test_registration_last_name_missing(self):
+        fill_in_data = {
+            'username':self.USERNAME,
+            'first_name':self.NAME,
+            'password1':self.PASSWORD,
+            'password2':self.PASSWORD,
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertTrue(form.is_valid())
+
+    def test_registration_username_missing(self):
+        fill_in_data = {
+            'first_name':self.NAME,
+            'last_name':self.FAMILY_NAME,
+            'password1':self.PASSWORD,
+            'password2':self.PASSWORD,
+        }
+        form = forms.RegisterUserForm(fill_in_data)
+        self.assertFalse(form.is_valid())
+
+
+class TestUrls(TestCase):
+
+    def test_base_url(self):
+        url = reverse(views.home_page)
+        self.assertEqual(resolve(url).func, views.home_page)
+
+    def test_dream_destinations_url(self):
+        url = reverse(views.dream_destinations_view)
+        self.assertEqual(resolve(url).func, views.dream_destinations_view)
+
+    def test_destination_url(self):
+        url = reverse(views.find_destination_view)
+        self.assertEqual(resolve(url).func, views.find_destination_view)
+
+    def test_details_url(self):
+        url = reverse(views.detailed_page)
+        self.assertEqual(resolve(url).func, views.detailed_page)
+
+    def test_remove_item_url(self):
+        url = reverse(views.remove_item)
+        self.assertEqual(resolve(url).func, views.remove_item)
+
+    def test_add_item_url(self):
+        url = reverse(views.add_item)
+        self.assertEqual(resolve(url).func, views.add_item)
+
+    def test_register_url(self):
+        url = reverse(views.register)
+        self.assertEqual(resolve(url).func, views.register)
+
+    def test_visit_item_url(self):
+        url = reverse(views.visit_item_view)
+        self.assertEqual(resolve(url).func, views.visit_item_view)
+
+    def test_logout_url(self):
+        url = reverse(views.logout_view)
+        self.assertEqual(resolve(url).func, views.logout_view)
