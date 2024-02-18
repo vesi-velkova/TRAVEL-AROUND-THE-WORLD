@@ -46,6 +46,12 @@ class CountryAdmin(admin.ModelAdmin):
                              countries_list = CountryList.objects.filter(owner = user).get())
             object.save()
             
+    @staticmethod
+    def find_most_visited_country():
+        most_visited_dict={}
+        for country in pycountry.countries:
+            most_visited_dict[country.name] = Country.objects.filter(name = country.name, visited = True).count() 
+        return max(most_visited_dict, key = most_visited_dict.get)
         
 class CountriesListAdmin(admin.ModelAdmin):
     model = CountryList

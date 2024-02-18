@@ -18,6 +18,14 @@
         <a class="float-right" href="/logout">Logout</a>
     </div>
     <div id="content">
+        <style>
+            body {
+              background-image: url('{{photo}}');
+              background-repeat: no-repeat;
+              background-attachment: fixed;
+              background-size: 100% 100%;
+            }
+        </style>
         {% block content %}{% endblock %}
     </div>
 </body>

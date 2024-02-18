@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.http import HttpResponseNotFound, JsonResponse
 from .forms import AddDestinationForm, RegisterUserForm
 
-from . import places
+from .places import PlacesUtilities
 from . import models
 from . import admin
 
@@ -28,29 +28,55 @@ def dream_destinations_view(request):
         length = len(destination_list.get().items.all())
     except (KeyError, models.DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
+
     if not length:
-        # Show background image of Burgas is the list of dream destinations is empty.
-        place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius('Burgas, Bridge')
+        # Show background image of Burgas, if the list of dream destinations is empty.
+        place_obj = PlacesUtilities.find_places_given_place_type_and_radius('Burgas, Bridge')
     else:
+        # Select random destination from the list and verify does it exist.
         index = random.randint(1, len(destination_list.get().items.all()))
         destination = destination_list.get().items.all()[index - 1]
-        place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius(destination)
+        try:
+            place_obj = PlacesUtilities.find_places_given_place_type_and_radius(destination)
+        except:
+            return HttpResponseNotFound(f"'{destination}' is invalid or there is lack of information about it.")
+
     context = {
         'name': destination_list.values().get()['dream_destinations_list'],
         'items': destination_list.get().items.all(),
-        'photo': place_obj[0].get_photo_url()
     }
+    try:
+        picture = place_obj[0].get_photo_url()
+        context['photo'] = picture
+    except KeyError:
+        # There will be no background picture.
+        pass
+
     return render(request, 'dream_list.html', context)
 
 @login_required(login_url='/login/')
 def find_destination_view(request):
+    """View for the Destination tab."""
     try:
         countries_list = models.CountryList.objects.filter(owner=request.user)
-    except (KeyError, models.DreamDestinationsList.DoesNotExist):
+        countries_items = countries_list.get().countries.all()
+    except (KeyError, models.CountryList.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No dream destinations.')
+
+    most_visited_country = admin.CountryAdmin.find_most_visited_country()
+    capital = countryinfo.CountryInfo(most_visited_country).capital()
+    country_obj= PlacesUtilities.find_places_given_place_type_and_radius(capital)
+
     context = {
-        'items': countries_list.get().countries.all(),
+        'items': countries_items,
     }
+    try:
+        picture = country_obj[0].get_photo_url()
+        context['photo'] = picture
+    except KeyError:
+        # There will be no background picture.
+        pass
+
     return render(request, 'destination.html', context)
 
 @login_required(login_url='/login/')
@@ -60,25 +86,34 @@ def detailed_page(request):
         destination = models.Destination.objects.get(pk=request.GET['id'])
     except (KeyError, models.Destination.DoesNotExist):
         return HttpResponseNotFound('Invalid link. No ID found.')
-    place_obj = places.PlacesUtilities().find_places_given_place_type_and_radius(destination)
+    try:
+        place_obj = PlacesUtilities().find_places_given_place_type_and_radius(destination)
+    except:
+        return HttpResponseNotFound(f"'{destination}' is invalid or there is lack of information about it.")
+
     context = {
         'destination_name': destination.destination_name,
-        # When we are searching for a city, we expect this function to return a list with 1 place.
-        'photo': place_obj[0].get_photo_url() 
     }
-    detailed_info_keys = ['name', 'subregion', 'region', 'capital', 'currencies', 
-                          'timezones', 'languages','population', 'wiki']
+
+    try:
+        picture = place_obj[0].get_photo_url()
+        context['photo'] = picture
+    except KeyError:
+        # There will be no background picture.
+        pass
+
+    detailed_info_keys = ['name', 'subregion', 'region', 'capital', 'currencies',
+                           'languages','population', 'wiki']
     for item in detailed_info_keys:
         context[item] = countryinfo.CountryInfo(destination.country).info()[item]
 
     return render(request, 'details.html', context)
-    
+
 @login_required(login_url='/login/')
 def remove_item(request):
     """Remove an item from the list of dream destinations of the user."""
     try:
         item = models.Destination.objects.get(pk=request.GET['id'])
-        print(item)
         # Ensure that a user can't touch other people's stuff
         if item.list_name.owner != request.user:
             return HttpResponseNotFound('Invalid link.')
@@ -96,7 +131,7 @@ def add_item(request):
         list_name = models.DreamDestinationsList.objects.filter(owner=request.user).get()
     except (KeyError, ValueError, models.DreamDestinationsList.DoesNotExist):
         return HttpResponseNotFound('Invalid link.')
-    if not places.PlacesUtilities.is_country_valid(country):
+    if not PlacesUtilities.is_country_valid(country):
         return HttpResponseNotFound('Please, enter a valid country in the world.')
     form = AddDestinationForm({'destination_name': destination_name,
                                 'country': country,
