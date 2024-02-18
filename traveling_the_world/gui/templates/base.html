@@ -6,12 +6,11 @@
     <link rel="icon" href="{% load static %} {% static 'plane_globe_logo.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'generic.css' %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="{% static 'generic.js' %}"></script>
 </head>
 <body>
     <div class="topnav">
         <a class="active" href="/">Home</a>
-        <a href="#find_city">Destionation</a>
+        <a href="/destination/">Destionation</a>
         <a href="#find_sights">Sightseeing</a>
         <a href="#visited_places">Visited places</a>
         <a href="/dream_destinations/">Dream destinations</a>
@@ -19,6 +18,14 @@
         <a class="float-right" href="/logout">Logout</a>
     </div>
     <div id="content">
+        <style>
+            body {
+              background-image: url('{{photo}}');
+              background-repeat: no-repeat;
+              background-attachment: fixed;
+              background-size: 100% 100%;
+            }
+        </style>
         {% block content %}{% endblock %}
     </div>
 </body>

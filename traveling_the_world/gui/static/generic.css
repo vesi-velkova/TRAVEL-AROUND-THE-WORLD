@@ -101,10 +101,6 @@ a:hover {
     background-color: rgb(83, 212, 169);
 }
 
-.list-item input{
-    display: none;
-}
-
 .remove-item {
     padding: 1px;
     color: black;
@@ -126,4 +122,21 @@ a:hover {
 
 .errorlist {
     color: red;
+}
+
+.visited-item {
+    background-color: green;
+    color: white;
+}
+
+.list-item input{
+    display: none;
+}
+
+.search-item {
+    width: 20px;
+    line-height: 10px;
+    display: inline;
+    padding: 5px;
+    margin: 3px;
 }

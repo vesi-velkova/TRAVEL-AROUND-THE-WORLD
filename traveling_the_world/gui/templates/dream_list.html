@@ -1,16 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script src="{% load static %}{% static 'remove_item.js' %}"></script>
     <div class="header">{{ name }}</div>
-    <style>
-        body {
-            background-image: url('{{photo}}');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: 100% 100%;
-        }
-    </style>
-
     <form class="add-item center" method="POST" action="/dream_destinations/add_item/">
         {% csrf_token %}
         <a>Destination: </a><input type="text" name="destination_name" id="destination_name"/>
@@ -23,7 +15,7 @@
         {% if items %}
             {% for item in items %}
                 <a href='details?id={{item.pk}}' class="list-item">{{ item }}</a>
-                <a class="remove-item float-right " href="remove_item?id={{item.pk}}">x</a>
+                <a href=# class="remove-item float-right" data-id="{{item.pk}}" >x</a>
             {% endfor %}
         {% else %}
             <span class="empty-list-identifier">No dream destinations yet, sorry... :(</span>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="{% load static %}{% static 'visited_destination.js' %}"></script>
+    <div class="header"> Countries </div>
+    <div class="clear"></div>
+    <div class="list">
+        {% if items %}
+            {% for item in items %}
+                <div class="list-item">
+                    {{ item }} 
+                    <input type="checkbox" data-id="{{ item.pk }}"
+                        {% if item.visited %} checked="checked" {% endif %} 
+                    />
+                </div>
+                <a href='destination/search_cities?id={{item.pk}}' class='search-item'>Find cities</a>
+            {% endfor %}
+        {% else %}
+            <span class="empty-list-identifier">No countries are visible for you yet, sorry... :(</span>
+        {% endif %}
+    </div>
+{% endblock %}

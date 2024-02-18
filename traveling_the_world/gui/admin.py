@@ -20,6 +20,10 @@ class DreamDestinationsListAdmin(admin.ModelAdmin):
     list_display = ('dream_destinations_list', 'owner')
     fields = ('dream_destinations_list', 'owner')
 
+    @staticmethod
+    def populate_database(user):
+        object = DreamDestinationsList(dream_destinations_list = "DREAM DESTINATIONS", owner = user)
+        object.save()
 
 admin.site.register(Destination, DestinationAdmin)
 admin.site.register(DreamDestinationsList, DreamDestinationsListAdmin)
@@ -42,6 +46,12 @@ class CountryAdmin(admin.ModelAdmin):
                              countries_list = CountryList.objects.filter(owner = user).get())
             object.save()
             
+    @staticmethod
+    def find_most_visited_country():
+        most_visited_dict={}
+        for country in pycountry.countries:
+            most_visited_dict[country.name] = Country.objects.filter(name = country.name, visited = True).count() 
+        return max(most_visited_dict, key = most_visited_dict.get)
         
 class CountriesListAdmin(admin.ModelAdmin):
     model = CountryList
